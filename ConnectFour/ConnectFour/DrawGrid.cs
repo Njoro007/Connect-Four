@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace ConnectFour
 {
-    public class GameGrid
+    public class DrawGrid
     {
         public int Rows { get; private set; }
         public int Columns { get; private set; }
         public Disc[,] Grid { get; private set; }
 
-        public GameGrid(int rows, int columns)
+        public DrawGrid(int rows, int columns)
         {
             Rows = rows;
             Columns = columns;

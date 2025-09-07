@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace ConnectFour
 {
@@ -13,6 +10,82 @@ namespace ConnectFour
         public int Columns { get; set; }
         public string PlayerOneName { get; set; }
         public string PlayerTwoName { get; set; }
+
+        // Disc allocation logic
+        public int TotalCells => Rows * Columns;
+        public int DiscsPerPlayer => (int)Math.Floor((Rows * Columns) / 2.0);
+
+
+        // Player 1 disc counts
+        public int PlayerOneOrdinaryDiscs { get; private set; }
+        public int PlayerOneBoringDiscs { get; private set; } = 2;
+        public int PlayerOneMagneticDiscs { get; private set; } = 2;
+
+        // Player 2 disc counts
+        public int PlayerTwoOrdinaryDiscs { get; private set; }
+        public int PlayerTwoBoringDiscs { get; private set; } = 2;
+        public int PlayerTwoMagneticDiscs { get; private set; } = 2;
+
+
+
+        public void InitializeDiscInventory()
+        {
+            int ordinary = DiscsPerPlayer - (PlayerOneBoringDiscs + PlayerOneMagneticDiscs);
+            if (ordinary < 0)
+                throw new InvalidOperationException("Grid too small to support special discs.");
+
+            PlayerOneOrdinaryDiscs = ordinary;
+            PlayerTwoOrdinaryDiscs = ordinary;
+        }
+
+        public bool UseDisc(int moveCounter, string type)
+        {
+            bool isPlayerOne = moveCounter % 2 != 0;
+
+            switch (type.ToLower())
+            {
+                case "ordinary":
+                    if (isPlayerOne && PlayerOneOrdinaryDiscs > 0)
+                    {
+                        PlayerOneOrdinaryDiscs--;
+                        return true;
+                    }
+                    else if (!isPlayerOne && PlayerTwoOrdinaryDiscs > 0)
+                    {
+                        PlayerTwoOrdinaryDiscs--;
+                        return true;
+                    }
+                    break;
+
+                case "boring":
+                    if (isPlayerOne && PlayerOneBoringDiscs > 0)
+                    {
+                        PlayerOneBoringDiscs--;
+                        return true;
+                    }
+                    else if (!isPlayerOne && PlayerTwoBoringDiscs > 0)
+                    {
+                        PlayerTwoBoringDiscs--;
+                        return true;
+                    }
+                    break;
+
+                case "magnetic":
+                    if (isPlayerOne && PlayerOneMagneticDiscs > 0)
+                    {
+                        PlayerOneMagneticDiscs--;
+                        return true;
+                    }
+                    else if (!isPlayerOne && PlayerTwoMagneticDiscs > 0)
+                    {
+                        PlayerTwoMagneticDiscs--;
+                        return true;
+                    }
+                    break;
+            }
+
+            return false; // Invalid disc type or no discs left
+        }
 
         public void DisplaySummary()
         {
@@ -29,6 +102,16 @@ namespace ConnectFour
             Thread.Sleep(1500); // Pause for 1.5 seconds
         }
 
+        public void DisplayDiscSummary()
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
 
+            Console.WriteLine($"🎯 Each player receives {DiscsPerPlayer} discs:");
+            Console.WriteLine($"Player 1 → Ordinary: {PlayerOneOrdinaryDiscs}, Boring: {PlayerOneBoringDiscs}, Magnetic: {PlayerOneMagneticDiscs}");
+            Console.WriteLine($"Player 2 → Ordinary: {PlayerTwoOrdinaryDiscs}, Boring: {PlayerTwoBoringDiscs}, Magnetic: {PlayerTwoMagneticDiscs}");
+            Console.WriteLine();
+
+            Console.ResetColor();
+        }
     }
 }

@@ -54,7 +54,7 @@
             if (mode == 3)
             {
                 // 🔄 Load from file
-                
+                //Later
             }
             else
             {
@@ -66,8 +66,10 @@
                 gameInventory.PlayerOneName = "@";
                 gameInventory.PlayerTwoName = "#";
 
+                // 🧮 Initialize disc counts
+                gameInventory.InitializeDiscInventory();
                 gameInventory.DisplaySummary();
-
+                gameInventory.DisplayDiscSummary();
             }
 
         }
