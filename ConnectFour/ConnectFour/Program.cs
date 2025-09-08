@@ -71,7 +71,7 @@
 
                 while (true)
                 {
-                    Console.Write("Enter move (e.g., M4 or b7): ");
+                    Console.Write("Enter move (e.g. o3, M4 or b7): ");
                     string input = Console.ReadLine();
 
                     try

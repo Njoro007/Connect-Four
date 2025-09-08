@@ -71,7 +71,7 @@ public class DrawGrid
         string symbol = currentPlayer == "Player 1" ? inventory.PlayerOneName : inventory.PlayerTwoName;
 
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"🎯 Move #{moveCounter} — {currentPlayer}'s turn ({symbol})");
+        Console.WriteLine($"Move #{moveCounter} — {currentPlayer}'s turn ({symbol})");
         Console.ResetColor();
         Console.WriteLine();
 
@@ -96,7 +96,7 @@ public class DrawGrid
         Console.WriteLine("\n");
 
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("📦 Disc Inventory:");
+        Console.WriteLine("Disc Inventory:");
         Console.WriteLine($"Player 1 ({inventory.PlayerOneName}) → Ordinary: {inventory.PlayerOneOrdinaryDiscs}, Boring: {inventory.PlayerOneBoringDiscs}, Magnetic: {inventory.PlayerOneMagneticDiscs}");
         Console.WriteLine($"Player 2 ({inventory.PlayerTwoName}) → Ordinary: {inventory.PlayerTwoOrdinaryDiscs}, Boring: {inventory.PlayerTwoBoringDiscs}, Magnetic: {inventory.PlayerTwoMagneticDiscs}");
         Console.ResetColor();

@@ -32,9 +32,9 @@ namespace ConnectFour
         public static (Disc disc, int column) ParseInput(string input, int moveCounter, GameInventory inventory, int maxColumns)
         {
             if (string.IsNullOrWhiteSpace(input) || input.Length < 2)
-                throw new ArgumentException("Invalid input format. Use format like M4 or b7.");
+                throw new ArgumentException("Invalid input format. Use format like o4 or M7.");
 
-            char symbol = input[0];
+            char typeChar = char.ToLower(input[0]);
             string columnPart = input.Substring(1);
 
             if (!int.TryParse(columnPart, out int column) || column < 1 || column > maxColumns)
@@ -42,18 +42,26 @@ namespace ConnectFour
 
             int player = moveCounter % 2 != 0 ? 1 : 2;
 
-            // Validate symbol against player
-            if (!IsValidSymbolForPlayer(symbol, player))
-                throw new ArgumentException("Invalid disc type for current player.");
+            // Map disc type to player-specific symbol
+            char symbol = (player, typeChar) switch
+            {
+                (1, 'o') => '@',
+                (2, 'o') => '#',
+                (1, 'b') => 'B',
+                (2, 'b') => 'b',
+                (1, 'm') => 'M',
+                (2, 'm') => 'm',
+                (1, 'e') => 'E',
+                (2, 'e') => 'e',
+                _ => throw new ArgumentException("Invalid disc type.")
+            };
 
-            // Check inventory
             if (!inventory.IsDiscAvailable(player, symbol))
                 throw new InvalidOperationException("No remaining discs of that type.");
 
             Disc disc = Disc.CreateDiscFromSymbol(symbol);
             return (disc, column - 1); // Convert to 0-based index
         }
-
         private static bool IsValidSymbolForPlayer(char symbol, int player)
         {
             if (player == 1)
