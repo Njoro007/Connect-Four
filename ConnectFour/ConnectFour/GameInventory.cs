@@ -12,6 +12,7 @@ namespace ConnectFour
         public string PlayerTwoName { get; set; }
         public int moveCounter { get; set; }
 
+
         // Disc allocation logic
         public int TotalCells => Rows * Columns;
         public int DiscsPerPlayer => (int)Math.Floor((Rows * Columns) / 2.0);
@@ -21,6 +22,7 @@ namespace ConnectFour
         public int PlayerOneOrdinaryDiscs { get; private set; }
         public int PlayerOneBoringDiscs { get; private set; } = 2;
         public int PlayerOneMagneticDiscs { get; private set; } = 2;
+
 
         // Player 2 disc counts
         public int PlayerTwoOrdinaryDiscs { get; private set; }

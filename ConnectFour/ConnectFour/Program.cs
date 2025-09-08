@@ -41,25 +41,25 @@
 
             if (mode == 3)
             {
-                // 🔄 Load from file
-                //Later
+                // Load from file
+                // Later
             }
             else if (mode == 4)
             {
-                // 🔄 Paste String
-                //Later
+                // Paste String
+                // Later
             }
             else
             {
-                // 🧩 Setup for new game
+                // Setup for new game
                 gameInventory.Rows = InputValidation.GetValidatedInteger("Enter number of rows: ", 4, 10);
                 gameInventory.Columns = InputValidation.ComputeColumnsFromRows(gameInventory.Rows);
 
-                // 🎯 Set player symbols as per assignment
+                // Set player symbols as per assignment
                 gameInventory.PlayerOneName = "@";
                 gameInventory.PlayerTwoName = "#";
 
-                // 🧮 Initialize disc counts
+                // Initialize disc counts
                 gameInventory.InitializeDiscInventory();
                 gameInventory.DisplaySummary();
                 gameInventory.DisplayDiscSummary();
@@ -69,6 +69,35 @@
                 gameInventory.moveCounter = 1;
                 grid.DisplayGrid(gameInventory.moveCounter);
 
+                while (true)
+                {
+                    Console.Write("Enter move (e.g., M4 or b7): ");
+                    string input = Console.ReadLine();
+
+                    try
+                    {
+                        var (disc, column) = InputValidation.ParseInput(input, gameInventory.moveCounter, gameInventory, gameInventory.Columns);
+                        int player = gameInventory.moveCounter % 2 != 0 ? 1 : 2;
+
+                        bool placed = grid.PlaceDisc(disc.Symbol, player, column);
+
+                        if (placed)
+                        {
+                            gameInventory.moveCounter++;
+                            grid.DisplayGrid(gameInventory.moveCounter);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Move not successful. Try again.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: {ex.Message}");
+                    }
+
+                    // Optional: Add win condition or draw check here
+                }
             }
 
         }
