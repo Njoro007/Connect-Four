@@ -28,5 +28,40 @@ namespace ConnectFour
         {
             return (int)Math.Round(rows * (7.0 / 6.0));
         }
+
+        public static (Disc disc, int column) ParseInput(string input, int moveCounter, GameInventory inventory, int maxColumns)
+        {
+            if (string.IsNullOrWhiteSpace(input) || input.Length < 2)
+                throw new ArgumentException("Invalid input format. Use format like M4 or b7.");
+
+            char symbol = input[0];
+            string columnPart = input.Substring(1);
+
+            if (!int.TryParse(columnPart, out int column) || column < 1 || column > maxColumns)
+                throw new ArgumentException("Invalid column number.");
+
+            int player = moveCounter % 2 != 0 ? 1 : 2;
+
+            // Validate symbol against player
+            if (!IsValidSymbolForPlayer(symbol, player))
+                throw new ArgumentException("Invalid disc type for current player.");
+
+            // Check inventory
+            if (!inventory.IsDiscAvailable(player, symbol))
+                throw new InvalidOperationException("No remaining discs of that type.");
+
+            Disc disc = Disc.CreateDiscFromSymbol(symbol);
+            return (disc, column - 1); // Convert to 0-based index
+        }
+
+        private static bool IsValidSymbolForPlayer(char symbol, int player)
+        {
+            if (player == 1)
+                return symbol == '@' || symbol == 'B' || symbol == 'M' || symbol == 'E';
+            else
+                return symbol == '#' || symbol == 'b' || symbol == 'm' || symbol == 'e';
+        }
+
+
     }
 }

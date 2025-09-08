@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConnectFour
 {
-    internal class DiscMagnetic
+    public class DiscMagnetic : Disc
     {
+        public DiscMagnetic(char symbol) : base(symbol) { }
     }
+
 }

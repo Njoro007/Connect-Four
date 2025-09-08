@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConnectFour
 {
-    internal class DiscBoring
+    public class DiscBoring : Disc
     {
+        public DiscBoring(char symbol) : base(symbol) { }
     }
+
 }

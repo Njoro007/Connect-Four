@@ -10,6 +10,7 @@ namespace ConnectFour
         public int Columns { get; set; }
         public string PlayerOneName { get; set; }
         public string PlayerTwoName { get; set; }
+        public int moveCounter { get; set; }
 
         // Disc allocation logic
         public int TotalCells => Rows * Columns;
@@ -27,12 +28,25 @@ namespace ConnectFour
         public int PlayerTwoMagneticDiscs { get; private set; } = 2;
 
 
+        public bool IsDiscAvailable(int player, char symbol)
+        {
+            return symbol switch
+            {
+                '@' => PlayerOneOrdinaryDiscs > 0,
+                '#' => PlayerTwoOrdinaryDiscs > 0,
+                'B' => PlayerOneBoringDiscs > 0,
+                'b' => PlayerTwoBoringDiscs > 0,
+                'M' => PlayerOneMagneticDiscs > 0,
+                'm' => PlayerTwoMagneticDiscs > 0,
+                _ => false
+            };
+        }
 
         public void InitializeDiscInventory()
         {
             int ordinary = DiscsPerPlayer - (PlayerOneBoringDiscs + PlayerOneMagneticDiscs);
             if (ordinary < 0)
-                throw new InvalidOperationException("Grid too small to support special discs.");
+                throw new InvalidOperationException("Grid too small to for all discs.");
 
             PlayerOneOrdinaryDiscs = ordinary;
             PlayerTwoOrdinaryDiscs = ordinary;
@@ -91,7 +105,7 @@ namespace ConnectFour
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
 
-            Console.WriteLine("📋 Game Summary:");
+            Console.WriteLine("Game Summary:");
             Console.WriteLine($"Mode: {GameMode}");
             Console.WriteLine($"Grid Size: {Rows} rows × {Columns} columns");
             Console.WriteLine($"Player 1: {PlayerOneName}");

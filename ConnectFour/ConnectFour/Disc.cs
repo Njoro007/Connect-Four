@@ -15,6 +15,34 @@ namespace ConnectFour
             Symbol = symbol;
         }
 
+        public static Disc CreateDiscFromSymbol(char symbol)
+        {
+            return symbol switch
+            {
+                '@' => new DiscOrdinary('@'),
+                '#' => new DiscOrdinary('#'),
+                'B' => new DiscBoring('B'),
+                'b' => new DiscBoring('b'),
+                'M' => new DiscMagnetic('M'),
+                'm' => new DiscMagnetic('m'),
+                _ => throw new ArgumentException("Invalid disc symbol.")
+            };
+        }
+
+        public static string GetDiscTypeFromSymbol(char symbol)
+        {
+            return symbol switch
+            {
+                '@' => "Ordinary",
+                '#' => "Ordinary",
+                'B' => "Boring",
+                'b' => "Boring",
+                'M' => "Magnetic",
+                'm' => "Magnetic",
+                _ => throw new ArgumentException("Invalid disc symbol.")
+            };
+        }
+
 
     }
 }
