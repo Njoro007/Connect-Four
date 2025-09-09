@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ConnectFour
 {
-    internal class GamePlay
+    public class GamePlay
     {
+
     }
 }

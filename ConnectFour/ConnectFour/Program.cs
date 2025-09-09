@@ -1,4 +1,6 @@
-﻿namespace ConnectFour
+﻿using System.Numerics;
+
+namespace ConnectFour
 {
     internal class Program
     {
@@ -79,12 +81,33 @@
                         var (disc, column) = InputValidation.ParseInput(input, gameInventory.moveCounter, gameInventory, gameInventory.Columns);
                         int player = gameInventory.moveCounter % 2 != 0 ? 1 : 2;
 
-                        bool placed = grid.PlaceDisc(disc.Symbol, player, column);
+                        int dropRow = grid.PlaceDisc(disc.Symbol, player, column);
 
-                        if (placed)
+                        if (dropRow != -1) // -1 indicates failure
                         {
                             gameInventory.moveCounter++;
                             grid.DisplayGrid(gameInventory.moveCounter);
+
+                            // Check for win
+                            bool isWinningMove = grid.CheckWin(dropRow, column);
+                            if (isWinningMove)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Magenta;
+                                string winner = player == 1 ? gameInventory.PlayerOneName : gameInventory.PlayerTwoName;
+                                Console.WriteLine($"🎉 {winner} wins the game!");
+                                Console.ResetColor();
+                                break;
+                            }
+
+                            // Check for draw
+                            bool isDraw = grid.CheckDraw();
+                            if (isDraw)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine("⚖️ It's a draw! No more moves left.");
+                                Console.ResetColor();
+                                break;
+                            }
                         }
                         else
                         {
@@ -95,8 +118,6 @@
                     {
                         Console.WriteLine($"Error: {ex.Message}");
                     }
-
-                    // Optional: Add win condition or draw check here
                 }
             }
 
