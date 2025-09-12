@@ -48,7 +48,7 @@ namespace ConnectFour
         {
             int ordinary = DiscsPerPlayer - (PlayerOneBoringDiscs + PlayerOneMagneticDiscs);
             if (ordinary < 0)
-                throw new InvalidOperationException("Grid too small to for all discs.");
+                throw new InvalidOperationException("Grid too small to for all discs."); 
 
             PlayerOneOrdinaryDiscs = ordinary;
             PlayerTwoOrdinaryDiscs = ordinary;
@@ -115,19 +115,41 @@ namespace ConnectFour
             Console.WriteLine();
 
             Console.ResetColor();
-            Thread.Sleep(1500); // Pause for 1.5 seconds
+            Thread.Sleep(1500); // Pause
         }
 
         public void DisplayDiscSummary()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
 
-            Console.WriteLine($"🎯 Each player receives {DiscsPerPlayer} discs:");
+            Console.WriteLine($"Each player receives {DiscsPerPlayer} discs:");
             Console.WriteLine($"Player 1 → Ordinary: {PlayerOneOrdinaryDiscs}, Boring: {PlayerOneBoringDiscs}, Magnetic: {PlayerOneMagneticDiscs}");
             Console.WriteLine($"Player 2 → Ordinary: {PlayerTwoOrdinaryDiscs}, Boring: {PlayerTwoBoringDiscs}, Magnetic: {PlayerTwoMagneticDiscs}");
             Console.WriteLine();
 
             Console.ResetColor();
         }
+
+        public void RestoreDisc(int player, string type)
+        {
+            switch (type.ToLower())
+            {
+                case "ordinary":
+                    if (player == 1) PlayerOneOrdinaryDiscs++;
+                    else PlayerTwoOrdinaryDiscs++;
+                    break;
+
+                case "boring":
+                    if (player == 1) PlayerOneBoringDiscs++;
+                    else PlayerTwoBoringDiscs++;
+                    break;
+
+                case "magnetic":
+                    if (player == 1) PlayerOneMagneticDiscs++;
+                    else PlayerTwoMagneticDiscs++;
+                    break;
+            }
+        }
+
     }
 }

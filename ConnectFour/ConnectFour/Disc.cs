@@ -15,6 +15,12 @@ namespace ConnectFour
             Symbol = symbol;
         }
 
+        public virtual void ApplyEffect(Disc[,] grid, int row, int col, GameInventory inventory)
+        {
+            // no effect
+        }
+
+
         public static Disc CreateDiscFromSymbol(char symbol)
         {
             return symbol switch

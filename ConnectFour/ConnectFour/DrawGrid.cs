@@ -33,21 +33,21 @@ public class DrawGrid
     }
 
 
-    //This method takes the disc symbol, player number, and column, then places the disc if possible.
+    //This method takes the disc symbol, player number, and column, then places the disc if possibl
     public int PlaceDisc(char symbol, int player, int column)
     {
         int dropRow = GetDropRow(column);
 
         if (dropRow == -1)
         {
-            Console.WriteLine("❌ Column is full.");
+            Console.WriteLine("Column is full.");
             return -1; // Indicates failure
         }
 
-        // Validate disc availability
+        // Check disc availability
         if (!inventory.IsDiscAvailable(player, symbol))
         {
-            Console.WriteLine("❌ No remaining discs of that type.");
+            Console.WriteLine("No remaining discs of that type.");
             return -1;
         }
 
@@ -59,7 +59,11 @@ public class DrawGrid
         string discType = Disc.GetDiscTypeFromSymbol(symbol);
         inventory.UseDisc(inventory.moveCounter, discType);
 
-        return dropRow; // Success: return the row where the disc was placed
+        //Applying effects for Magnetic and Boring Discs. implements in their respective classes using polymorfism
+        Grid[dropRow, column] = disc;
+        disc.ApplyEffect(Grid, dropRow, column, inventory);
+
+        return dropRow; // Success: retur the row where the disc was placedd
     }
 
 

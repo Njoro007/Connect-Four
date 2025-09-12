@@ -94,7 +94,7 @@ namespace ConnectFour
                             {
                                 Console.ForegroundColor = ConsoleColor.Magenta;
                                 string winner = player == 1 ? gameInventory.PlayerOneName : gameInventory.PlayerTwoName;
-                                Console.WriteLine($"🎉 {winner} wins the game!");
+                                Console.WriteLine($"****{winner} wins the game!****");
                                 Console.ResetColor();
                                 break;
                             }
@@ -104,7 +104,7 @@ namespace ConnectFour
                             if (isDraw)
                             {
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine("⚖️ It's a draw! No more moves left.");
+                                Console.WriteLine("It's a draw! No more moves left.");
                                 Console.ResetColor();
                                 break;
                             }
