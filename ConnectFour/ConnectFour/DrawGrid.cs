@@ -86,7 +86,15 @@ public class DrawGrid
             for (int col = 0; col < Columns; col++)
             {
                 Disc disc = Grid[row, col];
-                char cellSymbol = disc?.Symbol ?? ' ';
+                char cellSymbol;
+                if (disc != null)
+                {
+                    cellSymbol = disc.Symbol;
+                }
+                else
+                {
+                    cellSymbol = ' ';
+                }
                 Console.Write($"| {cellSymbol} ");
             }
             Console.WriteLine("|");
@@ -98,7 +106,7 @@ public class DrawGrid
             Console.Write($"  {col + 1} ");
         }
 
-        Console.WriteLine("\n");
+        Console.WriteLine(Environment.NewLine);
 
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine("Disc Inventory:");
@@ -116,18 +124,18 @@ public class DrawGrid
 
         char symbol = disc.Symbol;
 
-        return CheckDirection(row, col, symbol, 0, 1)   // Horizontal →
-            || CheckDirection(row, col, symbol, 1, 0)   // Vertical ↓
-            || CheckDirection(row, col, symbol, 1, 1)   // Diagonal ↘
-            || CheckDirection(row, col, symbol, 1, -1); // Diagonal ↙
+        return CheckWinDirection(row, col, symbol, 0, 1)  
+            || CheckWinDirection(row, col, symbol, 1, 0)   
+            || CheckWinDirection(row, col, symbol, 1, 1)   
+            || CheckWinDirection(row, col, symbol, 1, -1); 
     }
 
-    private bool CheckDirection(int row, int col, char symbol, int rowDelta, int colDelta)
+    private bool CheckWinDirection(int row, int col, char symbol, int rowDirection, int colDirection)
     {
         int count = 1;
 
-        count += CountConsecutive(row, col, symbol, rowDelta, colDelta);
-        count += CountConsecutive(row, col, symbol, -rowDelta, -colDelta);
+        count += CountConsecutive(row, col, symbol, rowDirection, colDirection);
+        count += CountConsecutive(row, col, symbol, -rowDirection, -colDirection);
 
         return count >= 4;
     }
