@@ -20,10 +20,12 @@ namespace ConnectFour
                 Console.WriteLine("Student ID: 12176346");
                 Console.WriteLine("==============================================");
 
+                Console.WriteLine(Environment.NewLine);
+
                 Console.WriteLine("Select Game Mode:");
                 Console.WriteLine("1. Human vs Human");
                 Console.WriteLine("2. Human vs Computer");
-                Console.WriteLine("3. Restore Saved Game");
+                Console.WriteLine("3. Restore Saved Game  [Auto-Save is ON]");
                 Console.WriteLine("4. Test Mode");
                 Console.WriteLine("5. Exit");
 
@@ -80,10 +82,8 @@ namespace ConnectFour
                         Console.WriteLine("Game successfully restored.");
                         grid.DisplayGrid(gameInventory.moveCounter);
 
-                        // ✅ Continue gameplay from restored state
-                       await RunGameLoop(gameInventory, grid);
-
-
+                        // Continue gameplay from restored state
+                        await RunGameLoop(gameInventory, grid);
                     }
                     else if (mode == 4)
                     {
@@ -114,7 +114,7 @@ namespace ConnectFour
             }
         }
 
-        static async Task RunGameLoop(GameInventory gameInventory, DrawGrid? restoredGrid = null)
+        static async Task RunGameLoop(GameInventory gameInventory, DrawGrid restoredGrid = null)
         {
             DrawGrid grid;
 
@@ -143,7 +143,6 @@ namespace ConnectFour
                 gameInventory.DisplaySummary();
                 gameInventory.DisplayDiscSummary();
             }
-
 
             grid.DisplayGrid(gameInventory.moveCounter);
 

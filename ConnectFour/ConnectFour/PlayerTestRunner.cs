@@ -28,7 +28,6 @@ namespace ConnectFour
                         'O' => player == 1 ? '@' : '#',
                         'B' => player == 1 ? 'B' : 'b',
                         'M' => player == 1 ? 'M' : 'm',
-                        'E' => throw new NotImplementedException("Exploding disc not implemented."),
                         _ => throw new ArgumentException($"Unknown disc type: {discChar}")
                     };
 
