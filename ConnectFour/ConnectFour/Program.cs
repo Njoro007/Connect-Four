@@ -1,10 +1,12 @@
 ﻿using System.Numerics;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace ConnectFour
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.Title = "ConnectFour - IFN584 Edition";
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -43,13 +45,26 @@ namespace ConnectFour
 
             if (mode == 3)
             {
-                // Load from file
-                // Later
+                string json = File.ReadAllText("savegame.json");
+                GameState loadedState = JsonSerializer.Deserialize<GameState>(json);
+
+                gameInventory = loadedState.Inventory;
+                DrawGrid grid = loadedState.RestoreGrid();
+
+                grid.DisplayGrid(gameInventory.moveCounter);
             }
             else if (mode == 4)
             {
-                // Paste String
-                // Later
+                Console.Write("Enter test sequence (e.g. O4,O5,O3,...): ");
+                string testInput = Console.ReadLine();
+
+                gameInventory.Rows = 10; //assume 10 rows
+                gameInventory.Columns = InputValidation.ComputeColumnsFromRows(gameInventory.Rows);
+                gameInventory.PlayerOneName = "@";
+                gameInventory.PlayerTwoName = "#";
+                gameInventory.InitializeDiscInventory();
+
+                PlayerTestRunner.RunTestSequence(testInput, gameInventory);
             }
             else
             {
@@ -73,20 +88,55 @@ namespace ConnectFour
 
                 while (true)
                 {
-                    Console.Write("Enter move (e.g. o3, M4 or b7): ");
-                    string input = Console.ReadLine();
+                    //Console.Write("Enter move (e.g. o3, M4 or b7): ");
+                    //string input = Console.ReadLine();
 
                     try
                     {
-                        var (disc, column) = InputValidation.ParseInput(input, gameInventory.moveCounter, gameInventory, gameInventory.Columns);
+                        //var (disc, column) = InputValidation.ParseInput(input, gameInventory.moveCounter, gameInventory, gameInventory.Columns);
                         int player = gameInventory.moveCounter % 2 != 0 ? 1 : 2;
 
+                        Disc disc;
+                        int column;
+
+                        if (gameInventory.GameMode == "Human vs Computer" && player == 2)
+                        {
+                            // Computer player
+                            PlayerComputer computer = new PlayerComputer();
+                            (disc, column) = computer.MakeMove(grid, gameInventory);
+                            Console.WriteLine($"Computer plays: {disc.Symbol}{column + 1}");
+                            await Task.Delay(1000);
+                        }
+                        else
+                        {
+                            // Human player
+                            Console.Write("Enter move (e.g. o3, M4 or b7): ");
+                            string input = Console.ReadLine();
+                            (disc, column) = InputValidation.ParseInput(input, gameInventory.moveCounter, gameInventory, gameInventory.Columns);
+                        }
                         int dropRow = grid.PlaceDisc(disc.Symbol, player, column);
 
                         if (dropRow != -1) // -1 indicates failure
                         {
+                            //Apply special effect on disc
+                            grid.Grid[dropRow, column] = disc; // Actually place the disc
+                            disc.ApplyEffect(grid.Grid, dropRow, column, gameInventory);
+
+                            //add counter to keep track of who is playing
                             gameInventory.moveCounter++;
                             grid.DisplayGrid(gameInventory.moveCounter);
+
+                            // Auto-save game after each move
+                            GameState currentState = new GameState(gameInventory, grid);
+                            string saveJson = JsonSerializer.Serialize(currentState, new JsonSerializerOptions { WriteIndented = true });
+                            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                            string filePath = Path.Combine(desktopPath, "ConnectFour_AutoSave.json");
+                            File.WriteAllText(filePath, saveJson);
+                            Console.WriteLine($"[Auto-Save] Game progress saved to: {filePath}");
+
+                            // Write to desktop
+                            File.WriteAllText(filePath, saveJson);
+                            Console.WriteLine($"Game saved successfully to: {filePath}");
 
                             // Check for win
                             bool isWinningMove = grid.CheckWin(dropRow, column);

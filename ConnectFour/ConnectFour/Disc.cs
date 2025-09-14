@@ -18,6 +18,7 @@ namespace ConnectFour
         public virtual void ApplyEffect(Disc[,] grid, int row, int col, GameInventory inventory)
         {
             // no effect
+            // Overriden in other classes
         }
 
 

@@ -15,6 +15,7 @@ namespace ConnectFour
             int player = Symbol == 'M' ? 1 : 2;
             char ordinarySymbol = player == 1 ? '@' : '#';
 
+            // Step 1: Lift the nearest same-player ordinary disc below
             for (int r = row + 1; r < grid.GetLength(0); r++)
             {
                 Disc target = grid[r, col];
@@ -24,12 +25,20 @@ namespace ConnectFour
 
                     grid[r - 1, col] = target; // Lift up
                     grid[r, col] = null;
-                    break; // Only one disc affected
+                    break;
                 }
             }
 
-            // Convert magnetic disc to ordinary
-            grid[row, col] = new DiscOrdinary(ordinarySymbol);
+            // Step 2: Remove magnetic disc from original position
+            grid[row, col] = null;
+
+            // Step 3: Drop transformed disc to bottom of column
+            int bottomRow = grid.GetLength(0) - 1;
+            while (bottomRow >= 0 && grid[bottomRow, col] != null)
+                bottomRow--;
+
+            if (bottomRow >= 0)
+                grid[bottomRow, col] = new DiscOrdinary(ordinarySymbol);
         }
 
 

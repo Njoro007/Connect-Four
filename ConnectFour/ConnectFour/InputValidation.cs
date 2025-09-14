@@ -51,8 +51,6 @@ namespace ConnectFour
                 (2, 'b') => 'b',
                 (1, 'm') => 'M',
                 (2, 'm') => 'm',
-                (1, 'e') => 'E',
-                (2, 'e') => 'e',
                 _ => throw new ArgumentException("Invalid disc type.")
             };
 
@@ -65,9 +63,9 @@ namespace ConnectFour
         private static bool IsValidSymbolForPlayer(char symbol, int player)
         {
             if (player == 1)
-                return symbol == '@' || symbol == 'B' || symbol == 'M' || symbol == 'E';
+                return symbol == '@' || symbol == 'B' || symbol == 'M';
             else
-                return symbol == '#' || symbol == 'b' || symbol == 'm' || symbol == 'e';
+                return symbol == '#' || symbol == 'b' || symbol == 'm';
         }
 
 
