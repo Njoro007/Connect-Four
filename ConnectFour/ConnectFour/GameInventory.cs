@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using System.Threading;
 
 namespace ConnectFour
@@ -19,15 +20,15 @@ namespace ConnectFour
 
 
         // Player 1 disc counts
-        public int PlayerOneOrdinaryDiscs { get; private set; }
-        public int PlayerOneBoringDiscs { get; private set; } = 2;
-        public int PlayerOneMagneticDiscs { get; private set; } = 2;
+        [JsonInclude] public int PlayerOneOrdinaryDiscs { get; private set; }
+        [JsonInclude] public int PlayerOneBoringDiscs { get; private set; } = 2;
+        [JsonInclude] public int PlayerOneMagneticDiscs { get; private set; } = 2;
 
+        // Player 1 disc counts
+        [JsonInclude] public int PlayerTwoOrdinaryDiscs { get; private set; }
+        [JsonInclude] public int PlayerTwoBoringDiscs { get; private set; } = 2;
+        [JsonInclude] public int PlayerTwoMagneticDiscs { get; private set; } = 2;
 
-        // Player 2 disc counts
-        public int PlayerTwoOrdinaryDiscs { get; private set; }
-        public int PlayerTwoBoringDiscs { get; private set; } = 2;
-        public int PlayerTwoMagneticDiscs { get; private set; } = 2;
 
 
         public bool IsDiscAvailable(int player, char symbol)
@@ -46,10 +47,10 @@ namespace ConnectFour
 
         public void InitializeDiscInventory()
         {
-            int ordinary = DiscsPerPlayer - (PlayerOneBoringDiscs + PlayerOneMagneticDiscs);
-            if (ordinary < 0)
-                throw new InvalidOperationException("Grid too small to for all discs."); 
+            if (PlayerOneOrdinaryDiscs > 0 || PlayerTwoOrdinaryDiscs > 0)
+                return; // Already initialized or restored
 
+            int ordinary = DiscsPerPlayer - (PlayerOneBoringDiscs + PlayerOneMagneticDiscs);
             PlayerOneOrdinaryDiscs = ordinary;
             PlayerTwoOrdinaryDiscs = ordinary;
         }

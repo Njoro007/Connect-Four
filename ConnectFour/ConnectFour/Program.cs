@@ -4,173 +4,218 @@ using System.Threading.Tasks;
 
 namespace ConnectFour
 {
-    internal class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
             Console.Title = "ConnectFour - IFN584 Edition";
             Console.ForegroundColor = ConsoleColor.Cyan;
 
-            Console.WriteLine("==============================================");
-            Console.WriteLine("Welcome to ConnectFour!");
-            Console.WriteLine("Developed by Philip Njoroge for IFN584");
-            Console.WriteLine("==============================================");
-
-            Console.WriteLine("Select Game Mode:");
-            Console.WriteLine("1. Human vs Human");
-            Console.WriteLine("2. Human vs Computer");
-            Console.WriteLine("3. Restore Saved Game");
-            Console.WriteLine("4. Test Mode");
-
-           
-            int mode = InputValidation.GetValidatedInteger("Enter your choice (1-4): ", 1, 4);
-
-            GameInventory gameInventory = new GameInventory();
-
-            switch (mode)
+            while (true)
             {
-                case 1:
-                    gameInventory.GameMode = "Human vs Human";
+                Console.Clear();
+                Console.WriteLine("==============================================");
+                Console.WriteLine("Welcome to ConnectFour!");
+                Console.WriteLine("Developed by Philip Njoroge for IFN584");
+                Console.WriteLine("Student ID: 12176346");
+                Console.WriteLine("==============================================");
+
+                Console.WriteLine("Select Game Mode:");
+                Console.WriteLine("1. Human vs Human");
+                Console.WriteLine("2. Human vs Computer");
+                Console.WriteLine("3. Restore Saved Game");
+                Console.WriteLine("4. Test Mode");
+                Console.WriteLine("5. Exit");
+
+                int mode = InputValidation.GetValidatedInteger("Enter your choice (1-5): ", 1, 5);
+
+                if (mode == 5)
+                {
+                    Console.WriteLine("Thanks for playing ConnectFour!");
                     break;
-                case 2:
-                    gameInventory.GameMode = "Human vs Computer";
-                    break;
-                case 3:
-                    gameInventory.GameMode = "Restore Saved Game";
-                    break;
-                case 4:
-                    gameInventory.GameMode = "Test Mode";
-                    break;
+                }
+
+                GameInventory gameInventory = new GameInventory();
+
+                switch (mode)
+                {
+                    case 1:
+                        gameInventory.GameMode = "Human vs Human";
+                        break;
+                    case 2:
+                        gameInventory.GameMode = "Human vs Computer";
+                        break;
+                    case 3:
+                        gameInventory.GameMode = "Restore Saved Game";
+                        break;
+                    case 4:
+                        gameInventory.GameMode = "Test Mode";
+                        break;
+                }
+
+                try
+                {
+                    if (mode == 3)
+                    {
+                        string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                        string filePath = Path.Combine(desktopPath, "ConnectFour_AutoSave.json");
+
+                        if (!File.Exists(filePath))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Save file not found at: {filePath}");
+                            Console.WriteLine("Please make sure a saved game exists before restoring.");
+                            Console.ResetColor();
+                            Console.WriteLine("Press any key to return to the main menu...");
+                            Console.ReadKey();
+                            continue;
+                        }
+
+                        string json = File.ReadAllText(filePath);
+                        GameState loadedState = JsonSerializer.Deserialize<GameState>(json);
+
+                        gameInventory = loadedState.Inventory;
+                        DrawGrid grid = loadedState.RestoreGrid();
+
+                        Console.WriteLine("Game successfully restored.");
+                        grid.DisplayGrid(gameInventory.moveCounter);
+
+                        // ✅ Continue gameplay from restored state
+                       await RunGameLoop(gameInventory, grid);
+
+
+                    }
+                    else if (mode == 4)
+                    {
+                        Console.Write("Enter test sequence (e.g. O4,O5,O3,...): ");
+                        string testInput = Console.ReadLine();
+
+                        gameInventory.Rows = 10;
+                        gameInventory.Columns = InputValidation.ComputeColumnsFromRows(gameInventory.Rows);
+                        gameInventory.PlayerOneName = "@";
+                        gameInventory.PlayerTwoName = "#";
+                        gameInventory.InitializeDiscInventory();
+
+                        PlayerTestRunner.RunTestSequence(testInput, gameInventory);
+                        Console.WriteLine("Press any key to return to the main menu...");
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        await RunGameLoop(gameInventory);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unexpected error: {ex.Message}");
+                    Console.WriteLine("Press any key to return to the main menu...");
+                    Console.ReadKey();
+                }
             }
+        }
 
-            if (mode == 3)
+        static async Task RunGameLoop(GameInventory gameInventory, DrawGrid? restoredGrid = null)
+        {
+            DrawGrid grid;
+
+            if (restoredGrid == null)
             {
-                string json = File.ReadAllText("savegame.json");
-                GameState loadedState = JsonSerializer.Deserialize<GameState>(json);
-
-                gameInventory = loadedState.Inventory;
-                DrawGrid grid = loadedState.RestoreGrid();
-
-                grid.DisplayGrid(gameInventory.moveCounter);
-            }
-            else if (mode == 4)
-            {
-                Console.Write("Enter test sequence (e.g. O4,O5,O3,...): ");
-                string testInput = Console.ReadLine();
-
-                gameInventory.Rows = 10; //assume 10 rows
-                gameInventory.Columns = InputValidation.ComputeColumnsFromRows(gameInventory.Rows);
-                gameInventory.PlayerOneName = "@";
-                gameInventory.PlayerTwoName = "#";
-                gameInventory.InitializeDiscInventory();
-
-                PlayerTestRunner.RunTestSequence(testInput, gameInventory);
-            }
-            else
-            {
-                // Setup for new game
+                // New game setup
                 gameInventory.Rows = InputValidation.GetValidatedInteger("Enter number of rows: ", 4, 10);
                 gameInventory.Columns = InputValidation.ComputeColumnsFromRows(gameInventory.Rows);
-
-                // Set player symbols as per assignment
                 gameInventory.PlayerOneName = "@";
                 gameInventory.PlayerTwoName = "#";
 
-                // Initialize disc counts
-                gameInventory.InitializeDiscInventory();
+                gameInventory.InitializeDiscInventory(); // Only for new games -  to solve disc count errors during restoration
                 gameInventory.DisplaySummary();
                 gameInventory.DisplayDiscSummary();
 
-                DrawGrid grid = new DrawGrid(gameInventory.Rows, gameInventory.Columns, gameInventory);
-
+                grid = new DrawGrid(gameInventory.Rows, gameInventory.Columns, gameInventory);
                 gameInventory.moveCounter = 1;
-                grid.DisplayGrid(gameInventory.moveCounter);
+            }
+            else
+            {
+                // Restored game — inventory already populated
+                grid = restoredGrid;
+                Console.WriteLine("Game successfully restored.");
 
-                while (true)
+                //Display restored inventory
+                gameInventory.DisplaySummary();
+                gameInventory.DisplayDiscSummary();
+            }
+
+
+            grid.DisplayGrid(gameInventory.moveCounter);
+
+            while (true)
+            {
+                try
                 {
-                    //Console.Write("Enter move (e.g. o3, M4 or b7): ");
-                    //string input = Console.ReadLine();
+                    int player = gameInventory.moveCounter % 2 != 0 ? 1 : 2;
+                    Disc disc;
+                    int column;
 
-                    try
+                    if (gameInventory.GameMode == "Human vs Computer" && player == 2)
                     {
-                        //var (disc, column) = InputValidation.ParseInput(input, gameInventory.moveCounter, gameInventory, gameInventory.Columns);
-                        int player = gameInventory.moveCounter % 2 != 0 ? 1 : 2;
+                        PlayerComputer computer = new PlayerComputer();
+                        (disc, column) = computer.MakeMove(grid, gameInventory);
+                        Console.WriteLine($"Computer plays: {disc.Symbol}{column + 1}");
+                        await Task.Delay(1000);
+                    }
+                    else
+                    {
+                        Console.Write("Enter move (e.g. o3, M4 or b7): ");
+                        string input = Console.ReadLine();
+                        (disc, column) = InputValidation.ParseInput(input, gameInventory.moveCounter, gameInventory, gameInventory.Columns);
+                    }
 
-                        Disc disc;
-                        int column;
+                    int dropRow = grid.PlaceDisc(disc.Symbol, player, column);
 
-                        if (gameInventory.GameMode == "Human vs Computer" && player == 2)
+                    if (dropRow != -1)
+                    {
+                        grid.Grid[dropRow, column] = disc;
+                        disc.ApplyEffect(grid.Grid, dropRow, column, gameInventory);
+                        gameInventory.moveCounter++;
+                        grid.DisplayGrid(gameInventory.moveCounter);
+
+                        GameState currentState = new GameState(gameInventory, grid);
+                        string saveJson = JsonSerializer.Serialize(currentState, new JsonSerializerOptions { WriteIndented = true });
+                        string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                        string filePath = Path.Combine(desktopPath, "ConnectFour_AutoSave.json");
+                        File.WriteAllText(filePath, saveJson);
+                        Console.WriteLine($"[Auto-Save is ON]");
+
+                        if (grid.CheckWin(dropRow, column))
                         {
-                            // Computer player
-                            PlayerComputer computer = new PlayerComputer();
-                            (disc, column) = computer.MakeMove(grid, gameInventory);
-                            Console.WriteLine($"Computer plays: {disc.Symbol}{column + 1}");
-                            await Task.Delay(1000);
+                            Console.ForegroundColor = ConsoleColor.Magenta;
+                            string winner = player == 1 ? gameInventory.PlayerOneName : gameInventory.PlayerTwoName;
+                            Console.WriteLine($"****{winner} wins the game!****");
+                            Console.ResetColor();
+                            break;
                         }
-                        else
+
+                        if (grid.CheckDraw())
                         {
-                            // Human player
-                            Console.Write("Enter move (e.g. o3, M4 or b7): ");
-                            string input = Console.ReadLine();
-                            (disc, column) = InputValidation.ParseInput(input, gameInventory.moveCounter, gameInventory, gameInventory.Columns);
-                        }
-                        int dropRow = grid.PlaceDisc(disc.Symbol, player, column);
-
-                        if (dropRow != -1) // -1 indicates failure
-                        {
-                            //Apply special effect on disc
-                            grid.Grid[dropRow, column] = disc; // Actually place the disc
-                            disc.ApplyEffect(grid.Grid, dropRow, column, gameInventory);
-
-                            //add counter to keep track of who is playing
-                            gameInventory.moveCounter++;
-                            grid.DisplayGrid(gameInventory.moveCounter);
-
-                            // Auto-save game after each move
-                            GameState currentState = new GameState(gameInventory, grid);
-                            string saveJson = JsonSerializer.Serialize(currentState, new JsonSerializerOptions { WriteIndented = true });
-                            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                            string filePath = Path.Combine(desktopPath, "ConnectFour_AutoSave.json");
-                            File.WriteAllText(filePath, saveJson);
-                            Console.WriteLine($"[Auto-Save] Game progress saved to: {filePath}");
-
-                            // Write to desktop
-                            File.WriteAllText(filePath, saveJson);
-                            Console.WriteLine($"Game saved successfully to: {filePath}");
-
-                            // Check for win
-                            bool isWinningMove = grid.CheckWin(dropRow, column);
-                            if (isWinningMove)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Magenta;
-                                string winner = player == 1 ? gameInventory.PlayerOneName : gameInventory.PlayerTwoName;
-                                Console.WriteLine($"****{winner} wins the game!****");
-                                Console.ResetColor();
-                                break;
-                            }
-
-                            // Check for draw
-                            bool isDraw = grid.CheckDraw();
-                            if (isDraw)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine("It's a draw! No more moves left.");
-                                Console.ResetColor();
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Move not successful. Try again.");
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("It's a draw! No more moves left.");
+                            Console.ResetColor();
+                            break;
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Console.WriteLine($"Error: {ex.Message}");
+                        Console.WriteLine("Move not successful. Try again.");
                     }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
                 }
             }
 
+            Console.WriteLine("Press any key to return to the main menu...");
+            Console.ReadKey();
         }
+
     }
 }

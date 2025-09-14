@@ -7,7 +7,7 @@ namespace ConnectFour
         // Core game state
         public GameInventory Inventory { get; set; }
 
-        // Serialized grid: each cell holds a disc symbol or empty string
+        // Jagged Array: each cell holds a disc symbol or empty string
         public string[][] GridSymbols { get; set; }
 
         // Optional metadata
