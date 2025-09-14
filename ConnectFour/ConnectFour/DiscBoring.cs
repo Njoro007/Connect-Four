@@ -12,7 +12,7 @@ namespace ConnectFour
 
         public override void ApplyEffect(Disc[,] grid, int row, int col, GameInventory inventory)
         {
-            // Step 1: Remove all discs below
+            // Remove all discs below
             for (int r = row + 1; r < grid.GetLength(0); r++)
             {
                 Disc discBelow = grid[r, col];
@@ -31,10 +31,10 @@ namespace ConnectFour
                 }
             }
 
-            // Step 2: Remove the boring disc from its original position
+            //Remove the boring disc from its original position
             grid[row, col] = null;
 
-            // Step 3: Drop the boring disc to the bottom of the column
+            //Drop the boring disc to the bottom of the column
             int bottomRow = grid.GetLength(0) - 1;
             while (bottomRow >= 0 && grid[bottomRow, col] != null)
                 bottomRow--;

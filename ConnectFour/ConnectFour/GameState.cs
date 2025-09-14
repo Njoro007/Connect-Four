@@ -10,7 +10,6 @@ namespace ConnectFour
         // Jagged Array: each cell holds a disc symbol or empty string
         public string[][] GridSymbols { get; set; }
 
-        // Optional metadata
         public DateTime SaveTime { get; set; } = DateTime.Now;
         public string CurrentPlayer => Inventory.moveCounter % 2 != 0 ? Inventory.PlayerOneName : Inventory.PlayerTwoName;
 
@@ -31,7 +30,7 @@ namespace ConnectFour
             }
         }
 
-        // Reconstruct the DrawGrid from saved symbols
+        // drawing the DrawGrid from saved symbols
         public DrawGrid RestoreGrid()
         {
             DrawGrid restoredGrid = new DrawGrid(Inventory.Rows, Inventory.Columns, Inventory);

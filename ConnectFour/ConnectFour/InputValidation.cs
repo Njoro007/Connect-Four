@@ -60,13 +60,7 @@ namespace ConnectFour
             Disc disc = Disc.CreateDiscFromSymbol(symbol);
             return (disc, column - 1); // Convert to 0-based index
         }
-        private static bool IsValidSymbolForPlayer(char symbol, int player)
-        {
-            if (player == 1)
-                return symbol == '@' || symbol == 'B' || symbol == 'M';
-            else
-                return symbol == '#' || symbol == 'b' || symbol == 'm';
-        }
+  
 
 
     }

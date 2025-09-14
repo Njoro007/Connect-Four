@@ -11,12 +11,12 @@ namespace ConnectFour
         {
             int rows = inventory.Rows;
             int columns = inventory.Columns;
-            char symbol = '#'; // Player 2 ordinary disc
+            char symbol = '#'; // Player 2 ordinary disc indicating its the computers turn
 
             for (int col = 0; col < columns; col++)
             {
                 int row = grid.GetDropRow(col);
-                if (row == -1) continue; // Column full
+                if (row == -1) continue; // Column full indication
 
                 // Simulate placing the disc
                 Disc simulatedDisc = new DiscOrdinary(symbol);

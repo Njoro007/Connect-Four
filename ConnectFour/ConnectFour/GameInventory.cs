@@ -24,7 +24,7 @@ namespace ConnectFour
         [JsonInclude] public int PlayerOneBoringDiscs { get; private set; } = 2;
         [JsonInclude] public int PlayerOneMagneticDiscs { get; private set; } = 2;
 
-        // Player 1 disc counts
+        // Player 2 disc counts
         [JsonInclude] public int PlayerTwoOrdinaryDiscs { get; private set; }
         [JsonInclude] public int PlayerTwoBoringDiscs { get; private set; } = 2;
         [JsonInclude] public int PlayerTwoMagneticDiscs { get; private set; } = 2;

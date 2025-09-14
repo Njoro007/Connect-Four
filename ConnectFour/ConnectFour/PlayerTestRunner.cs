@@ -19,7 +19,7 @@ namespace ConnectFour
                         throw new ArgumentException($"Invalid move format: {move}");
 
                     char discChar = char.ToUpper(move[0]);
-                    int column = int.Parse(move.Substring(1)) - 1; // Converts to 0-based index
+                    int column = int.Parse(move.Substring(1)) - 1; // Converts to 0-based index player knows it starts at column 1 
 
                     int player = inventory.moveCounter % 2 != 0 ? 1 : 2;
 
@@ -35,7 +35,7 @@ namespace ConnectFour
 
                     if (dropRow == -1)
                     {
-                        Console.WriteLine($"Move {move} failed: Column full or invalid disc.");
+                        Console.WriteLine($"Move {move} failed: Column full");
                         continue;
                     }
 

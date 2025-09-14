@@ -29,7 +29,7 @@ public class DrawGrid
                 return row;
         }
 
-        return -1; // when Column is full
+        return -1; // when Column is full when called in PlaceDisc method
     }
 
 
